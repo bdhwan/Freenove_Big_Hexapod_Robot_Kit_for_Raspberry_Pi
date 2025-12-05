@@ -1,0 +1,22 @@
+# Cursor AI Instructions for this project
+
+# Python coding standards
+- Use Python 3.x syntax and best practices
+- Follow PEP 8 style guidelines
+- Add type hints where appropriate
+- Include docstrings for functions and classes
+
+# Project-specific rules
+- This is a Raspberry Pi hexapod robot control project
+- Server code is in the Server/ directory
+- Client code is in the Client/ directory
+- Use FastAPI for REST API endpoints
+- Use uvicorn as the ASGI server
+
+# Code organization
+- Keep functions modular and reusable
+- Add error handling for hardware interactions
+- Use descriptive variable and function names
+- Comment complex logic, especially hardware control code
+
+this server is raspberry 4B model

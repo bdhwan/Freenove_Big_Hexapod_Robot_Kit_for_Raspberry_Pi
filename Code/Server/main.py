@@ -8,13 +8,19 @@ from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtWidgets import QApplication, QMainWindow
 #from PyQt5.QtGui import *
 from server import Server
+import uvicorn
+from rest_api import app, set_server
 
 class MyWindow(QMainWindow,Ui_server):
     def __init__(self):
         self.user_ui=True
         self.start_tcp=False
         self.server=Server()
+        self.rest_api_thread=None
         self.parseOpt()
+        # Initialize REST API server
+        set_server(self.server)
+        self.start_rest_api()
         if self.user_ui:
             self.app = QApplication(sys.argv)
             super(MyWindow,self).__init__()
@@ -31,6 +37,14 @@ class MyWindow(QMainWindow,Ui_server):
             if self.user_ui:
                 self.pushButton_On_And_Off.setText('Off')
                 self.states.setText('On')
+    
+    def start_rest_api(self):
+        """Start REST API server in a separate thread"""
+        def run_api():
+            uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+        self.rest_api_thread = threading.Thread(target=run_api, daemon=True)
+        self.rest_api_thread.start()
+        print("REST API server started on http://0.0.0.0:8000")
 
     def parseOpt(self):
         self.opts,self.args = getopt.getopt(sys.argv[1:],"tn")
@@ -69,8 +83,10 @@ class MyWindow(QMainWindow,Ui_server):
         except:
             pass
         try:
-            self.server.server_socket.shutdown(2)
-            self.server.server_socket1.shutdown(2)
+            if hasattr(self.server, 'video_socket'):
+                self.server.video_socket.close()
+            if hasattr(self.server, 'command_socket'):
+                self.server.command_socket.close()
             self.server.stop_server()
         except:
             pass

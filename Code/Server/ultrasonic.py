@@ -1,6 +1,7 @@
 from gpiozero import DistanceSensor, PWMSoftwareFallback, DistanceSensorNoEcho
 import warnings
 import time
+from gpio_utils import release_gpio_pins
 
 class Ultrasonic:
     def __init__(self, trigger_pin: int = 27, echo_pin: int = 22, max_distance: float = 3.0):
@@ -10,6 +11,8 @@ class Ultrasonic:
         self.trigger_pin = trigger_pin  # Set the trigger pin number
         self.echo_pin = echo_pin        # Set the echo pin number
         self.max_distance = max_distance  # Set the maximum distance
+        # Try to release pins before initializing to prevent 'GPIO busy' errors
+        release_gpio_pins([self.trigger_pin, self.echo_pin])
         self.sensor = DistanceSensor(echo=self.echo_pin, trigger=self.trigger_pin, max_distance=self.max_distance)  # Initialize the distance sensor
 
     def __enter__(self):

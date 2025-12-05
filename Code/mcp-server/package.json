@@ -1,0 +1,33 @@
+{
+  "name": "hexapod-robot-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for Hexapod Robot Control via REST API",
+  "type": "module",
+  "main": "mcp_server.ts",
+  "bin": {
+    "hexapod-robot-mcp": "./mcp_server.ts"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx mcp_server.ts",
+    "dev": "tsx watch mcp_server.ts"
+  },
+  "keywords": [
+    "mcp",
+    "robot",
+    "hexapod",
+    "control"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "axios": "^1.7.7"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "tsx": "^4.16.0",
+    "typescript": "^5.5.0"
+  }
+}
+

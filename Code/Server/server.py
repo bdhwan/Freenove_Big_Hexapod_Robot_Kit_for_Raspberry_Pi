@@ -30,6 +30,7 @@ class Server:
     def __init__(self):
         # Initialize server state and components
         self.is_tcp_active = False
+        self.tcp_flag = False  # Alias for compatibility with main.py
         self.is_servo_relaxed = False
         self.led_controller = Led()
         self.adc_sensor = ADC()

@@ -1,10 +1,14 @@
 import time
 from gpiozero import OutputDevice
+from gpio_utils import release_gpio_pin
 
 class Buzzer:
     def __init__(self):
         """Initialize the Buzzer class."""
         self.PIN = 17                            # Set the GPIO pin for the buzzer
+        # Try to release the pin before initializing to prevent 'GPIO busy' errors
+        release_gpio_pin(self.PIN)
+        time.sleep(0.1)  # Small delay to ensure pin is released
         self.buzzer_pin = OutputDevice(self.PIN) # Initialize the buzzer pin
 
     def set_state(self, state: bool) -> None:
