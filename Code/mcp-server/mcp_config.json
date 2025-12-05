@@ -3,12 +3,10 @@
     "hexapod-robot": {
       "command": "node",
       "args": [
-        "--loader",
-        "tsx/esm",
-        "/home/bdhwan/Freenove_Big_Hexapod_Robot_Kit_for_Raspberry_Pi/Code/mcp-server/mcp_server.ts"
+        "/Users/bdhwan/git/Freenove_Big_Hexapod_Robot_Kit_for_Raspberry_Pi/Code/mcp-server/dist/mcp_server.js"
       ],
       "env": {
-        "ROBOT_REST_API_URL": "http://localhost:8000"
+        "ROBOT_REST_API_URL": "http://192.168.150.74:8000"
       }
     }
   }

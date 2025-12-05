@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsx mcp_server.ts",
-    "dev": "tsx watch mcp_server.ts"
+    "dev": "tsx watch mcp_server.ts",
+    "llm-controller": "tsx llm_robot_controller.ts"
   },
   "keywords": [
     "mcp",
