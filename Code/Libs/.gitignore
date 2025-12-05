@@ -1,0 +1,66 @@
+# Build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Compiled files
+*.so
+*.o
+*.a
+*.pyc
+*.pyo
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C/C++ build artifacts
+*.d
+*.obj
+*.exe
+*.out
+*.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# SCons
+.sconsign.dblite
+.sconf_temp/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*.log
+
+# Debian package files
+*.deb
+*.dsc
+*.build
+*.changes
+*.orig.*
+
+# Compiled binaries
+bin/
+*.exe
+
