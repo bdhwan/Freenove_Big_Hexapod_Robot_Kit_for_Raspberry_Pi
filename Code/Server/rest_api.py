@@ -104,15 +104,23 @@ def process_command(command_parts: list):
         }
     elif cmd.CMD_HEAD in command_parts:
         if len(command_parts) == 3:
+            # Fix: Swap servo ID 0 and 1 because they are reversed physically
+            # Input: 0=Horizontal, 1=Vertical
+            # Hardware: 0=Vertical, 1=Horizontal (based on user report)
+            req_id = int(command_parts[1])
+            target_id = 1 - req_id if req_id in [0, 1] else req_id
             robot_server.servo_controller.set_servo_angle(
-                int(command_parts[1]), int(command_parts[2])
+                target_id, int(command_parts[2])
             )
     elif cmd.CMD_CAMERA in command_parts:
         if len(command_parts) == 3:
             x = robot_server.control_system.restrict_value(int(command_parts[1]), 50, 180)
             y = robot_server.control_system.restrict_value(int(command_parts[2]), 0, 180)
-            robot_server.servo_controller.set_servo_angle(0, x)
-            robot_server.servo_controller.set_servo_angle(1, y)
+            # Fix: Swap servo ID 0 and 1
+            # x is Horizontal -> should map to Hardware ID 1
+            # y is Vertical -> should map to Hardware ID 0
+            robot_server.servo_controller.set_servo_angle(1, x)
+            robot_server.servo_controller.set_servo_angle(0, y)
     elif cmd.CMD_RELAX in command_parts:
         if robot_server.is_servo_relaxed == False:
             robot_server.control_system.relax(True)
@@ -597,8 +605,8 @@ async def move(request: MoveRequest):
     command_parts = [
         cmd.CMD_MOVE,
         str(request.mode),
+        str(-request.y),
         str(request.x),
-        str(request.y),
         str(request.speed),
         str(request.angle)
     ]
@@ -720,8 +728,8 @@ async def set_position(request: PositionRequest):
     """
     command_parts = [
         cmd.CMD_POSITION,
+        str(-request.y),
         str(request.x),
-        str(request.y),
         str(request.z)
     ]
     return process_command(command_parts)
@@ -790,8 +798,8 @@ async def execute_command(command: Command) -> dict:
             command_parts = [
                 cmd.CMD_MOVE,
                 str(command.params.mode),
+                str(-command.params.y),
                 str(command.params.x),
-                str(command.params.y),
                 str(command.params.speed),
                 str(command.params.angle)
             ]
@@ -863,8 +871,8 @@ async def execute_command(command: Command) -> dict:
         elif isinstance(command, PositionCommand):
             command_parts = [
                 cmd.CMD_POSITION,
+                str(-command.params.y),
                 str(command.params.x),
-                str(command.params.y),
                 str(command.params.z)
             ]
             result = process_command(command_parts)

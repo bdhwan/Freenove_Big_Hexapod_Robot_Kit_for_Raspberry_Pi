@@ -237,8 +237,22 @@ async function processNaturalLanguageCommand(userRequest: string): Promise<void>
 사용 가능한 로봇 제어 명령:
 ${availableTools}
 
+⚠️ 중요: 명령 처리 규칙
+1. **이동 명령 처리**: 
+   - 시간 지속이 필요한 이동 명령(예: "3초간 앞으로 이동")이나 연속된 동작을 요청받으면, 반드시 'robot_execute_sequence' 도구를 사용하여 한 번에 명령을 내리세요.
+   - 절대 'robot_move'를 여러 번 따로 호출하거나, 'robot_move' 후 'wait' 도구를 따로 호출하지 마세요.
+   - **중요**: 로봇이 실제로 이동하려면 이동 명령 사이에 대기 시간이 필수입니다. 이동 명령 뒤에는 항상 'wait' 명령을 포함해야 합니다. (별도 시간 언급이 없으면 기본 1초 이상)
+   - 이동 후 멈추는 동작이 포함되어야 합니다. (마지막에 x=0, y=0 이동 명령 추가)
+   - 구조: [이동 명령] -> [wait 명령 (필수)] -> [정지(x=0,y=0) 명령]
+
+2. **기본 파라미터**: 
+   - 사용자가 별도로 지정하지 않으면 **mode는 1**, **speed는 10(최대)**을 기본값으로 사용하세요.
+
 명령 형식:
 - robot_move: {mode: 1|2, x: -35~35, y: -35~35, speed: 2~10, angle: -10~10}
+- robot_execute_sequence: {commands: [{id, type, params}]}
+  - type: move, wait, head, led, buzzer, attitude, position, camera, balance, servo_power
+  - wait params: {seconds: number}
 - robot_set_led_color: {r: 0~255, g: 0~255, b: 0~255}
 - robot_set_led_mode: {mode: 0~5}
 - robot_set_head: {servo_id: 0|1, angle: -90~90}
@@ -253,22 +267,38 @@ ${availableTools}
 - robot_get_status: {}
 
 응답 형식:
-사용자의 요청을 분석하여 JSON 형식으로 명령을 반환하세요. 여러 명령이 필요한 경우 commands 배열을 사용하세요.
+사용자의 요청을 분석하여 JSON 형식으로 명령을 반환하세요.
 
-예시:
-{
-  "commands": [
-    {"tool": "robot_move", "args": {"mode": 1, "x": 10, "y": 0, "speed": 5, "angle": 0}},
-    {"tool": "robot_set_led_color", "args": {"r": 255, "g": 0, "b": 0}}
-  ],
-  "explanation": "앞으로 이동하고 LED를 빨간색으로 설정합니다"
-}
-
-단일 명령의 경우:
+예시 1 (단일 명령):
 {
   "tool": "robot_move",
-  "args": {"mode": 1, "x": 10, "y": 0, "speed": 5, "angle": 0},
-  "explanation": "앞으로 이동합니다"
+  "args": {"mode": 1, "x": 10, "y": 0, "speed": 10, "angle": 0},
+  "explanation": "앞으로 이동합니다 (기본 속도 10)"
+}
+
+예시 2 (시퀀스 명령 - 3초간 앞으로 이동):
+{
+  "tool": "robot_execute_sequence",
+  "args": {
+    "commands": [
+      {
+        "id": "move_1",
+        "type": "move",
+        "params": {"mode": 1, "x": 10, "y": 0, "speed": 10, "angle": 0}
+      },
+      {
+        "id": "wait_1",
+        "type": "wait",
+        "params": {"seconds": 3}
+      },
+      {
+        "id": "stop_1",
+        "type": "move",
+        "params": {"mode": 1, "x": 0, "y": 0, "speed": 10, "angle": 0}
+      }
+    ]
+  },
+  "explanation": "3초간 앞으로 이동 후 정지합니다."
 }`;
 
     // 4. 사용자 프롬프트 생성
